@@ -1,0 +1,34 @@
+language: go
+go:
+- 1.11.x
+
+dist: xenial
+sudo: required
+
+# Force-enable Go modules. This will be unnecessary when Go 1.12 lands.
+env:
+- IMG=kiwigrid/cert-watcher
+
+git:
+  depth: 1
+
+# Skip the install step. Don't `go get` dependencies. Only build with the code
+# in vendor/
+install: true
+
+# Don't email me the results of the test runs.
+notifications:
+  email: false
+
+script:
+- bash .travis/build.sh
+
+deploy:
+  - provider: script
+    script: bash .travis/deploy.sh
+    on:
+      branch: master
+  - provider: script
+    script: bash .travis/deploy.sh $TRAVIS_TAG
+    on:
+      tags: true
